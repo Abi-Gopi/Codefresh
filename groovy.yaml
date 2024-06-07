@@ -1,0 +1,21 @@
+version: '1.0'
+
+steps:
+  build:
+    title: Build
+    image: maven:3.8.3-openjdk-11
+    commands:
+      - mvn clean package
+
+  test:
+    title: Test
+    image: maven:3.8.3-openjdk-11
+    commands:
+      - mvn test
+
+  deploy:
+    title: Deploy
+    image: codefresh/cf-deploy-helm
+    commands:
+      - cf_export IMAGE_TAG=${{CF_BRANCH_TAG_NORMALIZED}}
+      - helm upgrade myapp ./chart --set image.tag=${{IMAGE_TAG}}
